@@ -11,11 +11,27 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.feature_extraction.text import TfidfVectorizer 
 from joblib import dump, load
 import numpy as np
+from nltk.stem import SnowballStemmer
+from nltk.tokenize import word_tokenize,RegexpTokenizer
+import re
+
 
 labels = ['Country', 'Electronic', 'Folk', 'HipHop', 'Indie', 'Jazz', 'Other', 'Pop', 'RB', 'Rock']
+#scaler = load('scaler.joblib')
+stemmer = SnowballStemmer("english")
+tokenizer = RegexpTokenizer("[\w’]+", flags=re.UNICODE)
+
+
+def tokenize(s):
+    s = s.lower() 
+    tokens = tokenizer.tokenize(s)
+    tokens = [stemmer.stem(t) for t in tokens]
+    return tokens
+
+
 vectorizer = load('vectorizer.joblib')
-scaler = load('scaler.joblib')
-model = models.load_model('model.hdf5', custom_objects=None, compile=True)
+model = models.load_model('model.hdf5')
+
 
 def predict_gener(lyrics):
     """
@@ -23,7 +39,7 @@ def predict_gener(lyrics):
     """
     
     lyrics = vectorizer.transform(lyrics)
-    lyrics = scaler.transform(lyrics)
+    #lyrics = scaler.transform(lyrics)
     lyrics = lyrics.toarray()[:, :, np.newaxis]
     lyrics = model.predict(lyrics)
     lyrics = labels[lyrics.argmax(axis=-1).item()]
