@@ -5,33 +5,15 @@ Created on Wed Jun 17 23:24:55 2020
 @author: Hayk
 """
 
-import tensorflow.keras as keras
-from tensorflow.keras import Sequential, layers, Input, optimizers, losses, metrics, callbacks, models
-from sklearn.preprocessing import StandardScaler
-from sklearn.feature_extraction.text import TfidfVectorizer 
-from joblib import dump, load
-import numpy as np
-from nltk.stem import SnowballStemmer
-from nltk.tokenize import word_tokenize,RegexpTokenizer
-import re
 
+from tensorflow.keras import models
+import numpy as np
+import utils
+from joblib import load
 
 labels = ['Country', 'Electronic', 'Folk', 'HipHop', 'Indie', 'Jazz', 'Other', 'Pop', 'RB', 'Rock']
-#scaler = load('scaler.joblib')
-stemmer = SnowballStemmer("english")
-tokenizer = RegexpTokenizer("[\w’]+", flags=re.UNICODE)
-
-
-def tokenize(s):
-    s = s.lower() 
-    tokens = tokenizer.tokenize(s)
-    tokens = [stemmer.stem(t) for t in tokens]
-    return tokens
-
-
-vectorizer = load('vectorizer.joblib')
 model = models.load_model('model.hdf5')
-
+vectorizer = load('vectorizer.joblib')
 
 def predict_gener(lyrics):
     """
